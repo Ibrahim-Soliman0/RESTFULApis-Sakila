@@ -1,5 +1,6 @@
 package entity;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class Store {
     @Column(name = "store_id", columnDefinition = "tinyint UNSIGNED not null")
     private Short id;
 
-    @NotNull
+    @JsonbTransient
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "manager_staff_id", nullable = false)
     private Staff managerStaff;
@@ -35,14 +36,16 @@ public class Store {
     @Column(name = "last_update", nullable = false)
     private Instant lastUpdate;
 
+    @JsonbTransient
     @OneToMany(mappedBy = "store")
     private Set<Customer> customers = new LinkedHashSet<>();
 
+    @JsonbTransient
     @OneToMany(mappedBy = "store")
     private Set<Inventory> inventories = new LinkedHashSet<>();
 
+    @JsonbTransient
     @OneToMany(mappedBy = "store")
     private Set<Staff> staff = new LinkedHashSet<>();
-
 
 }

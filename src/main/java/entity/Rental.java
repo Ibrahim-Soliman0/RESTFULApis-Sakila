@@ -1,5 +1,6 @@
 package entity;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -47,8 +48,8 @@ public class Rental {
     @Column(name = "last_update", nullable = false)
     private Instant lastUpdate;
 
+    @JsonbTransient
     @OneToMany(mappedBy = "rental")
     private Set<Payment> payments = new LinkedHashSet<>();
-
 
 }

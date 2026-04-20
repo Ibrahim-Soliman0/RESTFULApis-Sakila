@@ -6,8 +6,7 @@ import repository.Repository;
 
 import java.util.List;
 
-
-public abstract class BaseRepositoryImpl<T> implements Repository<T> {
+public abstract class BaseRepositoryImpl<T, ID> implements Repository<T, ID> {
 
     private final Class<T> entityClass;
 
@@ -20,7 +19,7 @@ public abstract class BaseRepositoryImpl<T> implements Repository<T> {
     }
 
     @Override
-    public T findById(Integer id) {
+    public T findById(ID id) {
         return em().find(entityClass, id);
     }
 
@@ -45,7 +44,16 @@ public abstract class BaseRepositoryImpl<T> implements Repository<T> {
     @Override
     public List<T> findAll() {
         return em().createQuery(
-                        "SELECT e FROM " + entityClass.getSimpleName() + " e", entityClass)
+                "SELECT e FROM " + entityClass.getSimpleName() + " e", entityClass)
+                .getResultList();
+    }
+
+    @Override
+    public List<T> findAll(int page, int size) {
+        return em().createQuery(
+                "SELECT e FROM " + entityClass.getSimpleName() + " e", entityClass)
+                .setFirstResult(page * size)
+                .setMaxResults(size)
                 .getResultList();
     }
 }

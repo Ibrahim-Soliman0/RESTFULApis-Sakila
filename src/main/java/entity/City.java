@@ -1,5 +1,6 @@
 package entity;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -36,8 +37,8 @@ public class City {
     @Column(name = "last_update", nullable = false)
     private Instant lastUpdate;
 
+    @JsonbTransient
     @OneToMany(mappedBy = "city")
     private Set<Address> addresses = new LinkedHashSet<>();
-
 
 }

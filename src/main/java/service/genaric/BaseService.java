@@ -6,15 +6,15 @@ import java.util.List;
 
 import java.util.Optional;
 
-public abstract class BaseService<T> {
+public abstract class BaseService<T, ID> {
 
-    protected final Repository<T> repository;
+    protected final Repository<T, ID> repository;
 
-    protected BaseService(Repository<T> repository) {
+    protected BaseService(Repository<T, ID> repository) {
         this.repository = repository;
     }
 
-    public Optional<T> getById(Integer id) {
+    public Optional<T> getById(ID id) {
         return Optional.ofNullable(repository.findById(id));
     }
 
@@ -26,5 +26,11 @@ public abstract class BaseService<T> {
         repository.delete(entity);
     }
 
-    public List<T> getAll(){ return repository.findAll();}
+    public List<T> getAll() {
+        return repository.findAll();
+    }
+
+    public List<T> getAll(int page, int size) {
+        return repository.findAll(page, size);
+    }
 }
