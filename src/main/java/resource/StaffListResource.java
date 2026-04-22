@@ -34,7 +34,7 @@ public class StaffListResource {
     @Path("/{id}")
     @Produces({ "application/xml", "application/json" })
     public Response getStaffListById(@PathParam("id") Short id) {
-        Optional<StaffList> staffList = staffListService.getById((short) id.intValue());
+        Optional<StaffList> staffList = staffListService.getById(id);
         if (staffList.isPresent()) {
             StaffListDto staffListDto = staffListMapper.toDto(staffList.get());
             return Response.ok(staffListDto).build();

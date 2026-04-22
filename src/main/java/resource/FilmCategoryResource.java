@@ -10,6 +10,7 @@ import mapper.FilmCategoryMapper;
 import service.FilmCategoryService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("film-categories")
@@ -30,6 +31,23 @@ public class FilmCategoryResource {
         }).build();
     }
 
+    @GET
+    @Path("/{filmId}/{categoryId}")
+    @Produces({ "application/xml", "application/json" })
+    public Response getFilmCategoryById(@PathParam("filmId") Integer filmId, @PathParam("categoryId") Short categoryId) {
+        FilmCategoryId id = new FilmCategoryId();
+        id.setFilmId(filmId);
+        id.setCategoryId(categoryId);
+
+        Optional<FilmCategory> filmCategory = filmCategoryService.getById(id);
+        if (filmCategory.isPresent()) {
+            FilmCategoryDto dto = filmCategoryMapper.toDto(filmCategory.get());
+            return Response.ok(dto).build();
+        }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
     @POST
     @Consumes({ "application/xml", "application/json" })
     @Produces({ "application/xml", "application/json" })
@@ -46,9 +64,12 @@ public class FilmCategoryResource {
         FilmCategoryId id = new FilmCategoryId();
         id.setFilmId(filmId);
         id.setCategoryId(categoryId);
-        FilmCategory filmCategory = new FilmCategory();
-        filmCategory.setId(id);
-        filmCategoryService.delete(filmCategory);
-        return Response.noContent().build();
+        Optional<FilmCategory> filmCategory = filmCategoryService.getById(id);
+        if (filmCategory.isPresent()) {
+            filmCategoryService.delete(filmCategory.get());
+            return Response.noContent().build();
+        }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

@@ -38,14 +38,13 @@ public class FilmActorResource {
         FilmActorId id = new FilmActorId();
         id.setActorId(actorId);
         id.setFilmId(filmId);
-        Optional<FilmActor> filmActor = filmActorService.getById(id); // This might not work, since BaseService uses
-                                                                      // Integer id, but FilmActor has FilmActorId
-        // Actually, BaseService.getById takes Integer, but FilmActor id is FilmActorId,
-        // so this won't work.
-        // I need to adjust. Perhaps the service needs to be overridden for composite
-        // keys.
-        // For now, skip GET by id for composite keys.
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        Optional<FilmActor> filmActor = filmActorService.getById(id);
+        if (filmActor.isPresent()) {
+            FilmActorDto filmActorDto = filmActorMapper.toDto(filmActor.get());
+            return Response.ok(filmActorDto).build();
+        }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @POST
@@ -64,9 +63,12 @@ public class FilmActorResource {
         FilmActorId id = new FilmActorId();
         id.setActorId(actorId);
         id.setFilmId(filmId);
-        FilmActor filmActor = new FilmActor();
-        filmActor.setId(id);
-        filmActorService.delete(filmActor);
-        return Response.noContent().build();
+        Optional<FilmActor> filmActor = filmActorService.getById(id);
+        if (filmActor.isPresent()) {
+            filmActorService.delete(filmActor.get());
+            return Response.noContent().build();
+        }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }
